@@ -67,3 +67,140 @@ class EngineClientTestCase(TestCase):
 
         request = engine_api_mock.last_request
         self.assertEqual(request.headers["X-Auth-Token"], "abcde")
+
+    @requests_mock.Mocker()
+    def test_direct_get_success(self, engine_api_mock):
+        engine = EngineClient(base_url="https://example.com", token="abcde")
+        engine_api_mock.get("https://example.com/s/sys-1/my-path/?key=value", json={"status": "ok"})
+
+        ret = engine.direct_get("sys-1", "/my-path/", {"key": "value"})
+
+        self.assertEqual(ret, {"status": "ok"})
+
+        request = engine_api_mock.last_request
+        self.assertEqual(request.headers["X-Auth-Token"], "abcde")
+
+    @requests_mock.Mocker()
+    def test_direct_get_failure(self, engine_api_mock):
+        engine = EngineClient(base_url="https://example.com", token="abcde")
+        engine_api_mock.get(
+            "https://example.com/s/sys-1/my-path/?key=value", json={"error": "ko"}, status_code=400
+        )
+
+        with self.assertRaises(EngineClientError) as cm:
+            engine.direct_get("sys-1", "/my-path/", {"key": "value"})
+
+        self.assertEqual(cm.exception.__cause__.response.json(), {"error": "ko"})
+
+        request = engine_api_mock.last_request
+        self.assertEqual(request.headers["X-Auth-Token"], "abcde")
+
+    @requests_mock.Mocker()
+    def test_direct_post_success(self, engine_api_mock):
+        engine = EngineClient(base_url="https://example.com", token="abcde")
+        engine_api_mock.post("https://example.com/s/sys-1/my-path/?key1=value1", json={"status": "ok"})
+
+        ret = engine.direct_post("sys-1", "/my-path/", {"key1": "value1"}, {"key2": "value2"})
+
+        self.assertEqual(ret, {"status": "ok"})
+
+        request = engine_api_mock.last_request
+        self.assertEqual(request.headers["X-Auth-Token"], "abcde")
+        self.assertEqual(request.json(), {"key2": "value2"})
+
+    @requests_mock.Mocker()
+    def test_direct_post_failure(self, engine_api_mock):
+        engine = EngineClient(base_url="https://example.com", token="abcde")
+        engine_api_mock.post(
+            "https://example.com/s/sys-1/my-path/?key1=value1", json={"error": "ko"}, status_code=400
+        )
+
+        with self.assertRaises(EngineClientError) as cm:
+            engine.direct_post("sys-1", "/my-path/", {"key1": "value1"}, {"key2": "value2"})
+
+        self.assertEqual(cm.exception.__cause__.response.json(), {"error": "ko"})
+
+        request = engine_api_mock.last_request
+        self.assertEqual(request.headers["X-Auth-Token"], "abcde")
+        self.assertEqual(request.json(), {"key2": "value2"})
+
+    @requests_mock.Mocker()
+    def test_direct_put_success(self, engine_api_mock):
+        engine = EngineClient(base_url="https://example.com", token="abcde")
+        engine_api_mock.put("https://example.com/s/sys-1/my-path/?key1=value1", json={"status": "ok"})
+
+        ret = engine.direct_put("sys-1", "/my-path/", {"key1": "value1"}, {"key2": "value2"})
+
+        self.assertEqual(ret, {"status": "ok"})
+
+        request = engine_api_mock.last_request
+        self.assertEqual(request.headers["X-Auth-Token"], "abcde")
+        self.assertEqual(request.json(), {"key2": "value2"})
+
+    @requests_mock.Mocker()
+    def test_direct_put_failure(self, engine_api_mock):
+        engine = EngineClient(base_url="https://example.com", token="abcde")
+        engine_api_mock.put(
+            "https://example.com/s/sys-1/my-path/?key1=value1", json={"error": "ko"}, status_code=400
+        )
+
+        with self.assertRaises(EngineClientError) as cm:
+            engine.direct_put("sys-1", "/my-path/", {"key1": "value1"}, {"key2": "value2"})
+
+        self.assertEqual(cm.exception.__cause__.response.json(), {"error": "ko"})
+
+        request = engine_api_mock.last_request
+        self.assertEqual(request.headers["X-Auth-Token"], "abcde")
+        self.assertEqual(request.json(), {"key2": "value2"})
+
+    @requests_mock.Mocker()
+    def test_direct_patch_success(self, engine_api_mock):
+        engine = EngineClient(base_url="https://example.com", token="abcde")
+        engine_api_mock.patch("https://example.com/s/sys-1/my-path/?key1=value1", json={"status": "ok"})
+
+        ret = engine.direct_patch("sys-1", "/my-path/", {"key1": "value1"}, {"key2": "value2"})
+
+        self.assertEqual(ret, {"status": "ok"})
+
+        request = engine_api_mock.last_request
+        self.assertEqual(request.headers["X-Auth-Token"], "abcde")
+        self.assertEqual(request.json(), {"key2": "value2"})
+
+    @requests_mock.Mocker()
+    def test_direct_patch_failure(self, engine_api_mock):
+        engine = EngineClient(base_url="https://example.com", token="abcde")
+        engine_api_mock.patch(
+            "https://example.com/s/sys-1/my-path/?key1=value1", json={"error": "ko"}, status_code=400
+        )
+
+        with self.assertRaises(EngineClientError) as cm:
+            engine.direct_patch("sys-1", "/my-path/", {"key1": "value1"}, {"key2": "value2"})
+
+        self.assertEqual(cm.exception.__cause__.response.json(), {"error": "ko"})
+
+        request = engine_api_mock.last_request
+        self.assertEqual(request.headers["X-Auth-Token"], "abcde")
+        self.assertEqual(request.json(), {"key2": "value2"})
+
+    @requests_mock.Mocker()
+    def test_direct_delete_success(self, engine_api_mock):
+        engine = EngineClient(base_url="https://example.com", token="abcde")
+        engine_api_mock.delete("https://example.com/s/sys-1/my-path/?key=value")
+
+        ret = engine.direct_delete("sys-1", "/my-path/", {"key": "value"})
+
+        self.assertIsNone(ret)
+
+        request = engine_api_mock.last_request
+        self.assertEqual(request.headers["X-Auth-Token"], "abcde")
+
+    @requests_mock.Mocker()
+    def test_direct_delete_failure(self, engine_api_mock):
+        engine = EngineClient(base_url="https://example.com", token="abcde")
+        engine_api_mock.delete("https://example.com/s/sys-1/my-path/?key=value", status_code=400)
+
+        with self.assertRaises(EngineClientError):
+            engine.direct_delete("sys-1", "/my-path/", {"key": "value"})
+
+        request = engine_api_mock.last_request
+        self.assertEqual(request.headers["X-Auth-Token"], "abcde")
