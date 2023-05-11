@@ -11,6 +11,9 @@ This project uses `tox` to release a version to PyPI.
 Run `tox -e release -- <env>`, where `<env>` is an index identifier in
 your `~/.pypirc` file.
 
+Alternatively, push a tag to the `main` branch to make a release
+using GitHub Actions.
+
 ## Usage examples
 ```python
 from rulesengine.client import EngineClient
