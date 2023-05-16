@@ -16,6 +16,7 @@ using GitHub Actions.
 
 ## Usage examples
 ```python
+from rulesengine.async_client import AsyncEngineClient
 from rulesengine.client import EngineClient
 
 engine = EngineClient(base_url="https://example.com", token="abcde")
@@ -30,4 +31,9 @@ prop_value = engine.get_pluggable_props(subject_id="sys-1", props="my-prop")
 return_value = engine.direct_post(
     subject_id="sys-1", path="/my/path/", params={"key": "value"}, data={"my": "payload"}
 )
+
+# To push an action to the engine (async client):
+async_engine = AsyncEngineClient(base_url="https://example.com", token="abcde")
+
+await async_engine.push_action(subject_id="sys-1", action="my-action", payload={"key": "value"})
 ```
